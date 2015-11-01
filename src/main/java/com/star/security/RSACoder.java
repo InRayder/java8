@@ -52,12 +52,12 @@ public abstract class RSACoder extends Coder {
 		// KEY_ALGORITHM 指定的加密算法
 		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
 
-		// 取私钥匙对象
-		PrivateKey priKey = keyFactory.generatePrivate(pkcs8KeySpec);
+		// 取得私钥对象
+		PrivateKey prikey = keyFactory.generatePrivate(pkcs8KeySpec);
 
 		// 用私钥对信息生成数字签名
-		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-		signature.initSign(priKey);
+		Signature signature = Signature.getInstance(KEY_ALGORITHM);
+		signature.initSign(prikey);
 		signature.update(data);
 
 		return encryptBASE64(signature.sign());
@@ -78,7 +78,6 @@ public abstract class RSACoder extends Coder {
 	 * 
 	 */
 	public static boolean verify(byte[] data, String publicKey, String sign) throws Exception {
-
 		// 解密由base64编码的公钥
 		byte[] keyBytes = decryptBASE64(publicKey);
 
@@ -91,11 +90,10 @@ public abstract class RSACoder extends Coder {
 		// 取公钥匙对象
 		PublicKey pubKey = keyFactory.generatePublic(keySpec);
 
-		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+		Signature signature = Signature.getInstance(KEY_ALGORITHM);
 		signature.initVerify(pubKey);
 		signature.update(data);
 
-		// 验证签名是否正常
 		return signature.verify(decryptBASE64(sign));
 	}
 
@@ -138,15 +136,16 @@ public abstract class RSACoder extends Coder {
 		byte[] keyBytes = decryptBASE64(key);
 
 		// 取得公钥
-		X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+		X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		Key publicKey = keyFactory.generatePublic(x509KeySpec);
+		Key publicKey = keyFactory.generatePublic(x509keySpec);
 
 		// 对数据解密
 		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 		cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
 		return cipher.doFinal(data);
+
 	}
 
 	/**
@@ -190,7 +189,7 @@ public abstract class RSACoder extends Coder {
 		// 取得私钥
 		PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
 		KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-		Key privateKey = keyFactory.generatePrivate(pkcs8KeySpec);
+		Key privateKey = keyFactory.generatePublic(pkcs8KeySpec);
 
 		// 对数据加密
 		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
@@ -243,10 +242,11 @@ public abstract class RSACoder extends Coder {
 		// 私钥
 		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-		Map<String, Object> keyMap = new HashMap<String, Object>(2);
+		Map<String, Object> keyMap = new HashMap<>(2);
 
 		keyMap.put(PUBLIC_KEY, publicKey);
 		keyMap.put(PRIVATE_KEY, privateKey);
+
 		return keyMap;
 	}
 }
