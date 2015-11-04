@@ -20,7 +20,7 @@ public class CertificateCoderTest {
 	private String alias = "www.zlex.org";
 	private String certificatePath = "d:/keys/zlex.cer";
 	private String keyStorePath = "d:/keys/zlex.keystore";
-	private String clientKeyStorePath = "d:/keys/zlex.keystoree";
+	private String clientKeyStorePath = "d:/keys/zlex-client.keystore";
 	private String clientPassword = "654321";
 
 	@Test
