@@ -1,6 +1,14 @@
 package com.star.security.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.junit.Test;
 
@@ -12,6 +20,8 @@ public class CertificateCoderTest {
 	private String alias = "www.zlex.org";
 	private String certificatePath = "d:/keys/zlex.cer";
 	private String keyStorePath = "d:/keys/zlex.keystore";
+	private String clientKeyStorePath = "d:/keys/zlex.keystoree";
+	private String clientPassword = "654321";
 
 	@Test
 	public void test() throws Exception {
@@ -59,5 +69,28 @@ public class CertificateCoderTest {
 		System.err.println("状态:\r" + status);
 		assertTrue(status);
 
+	}
+
+	@Test
+	public void testHttps() throws Exception {
+		URL url = new URL("https://www.zlex.org/examples/");
+		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+
+		CertificateCoder.configSSLSocketFactory(conn, clientPassword, clientKeyStorePath, clientKeyStorePath);
+
+		InputStream is = conn.getInputStream();
+
+		int length = conn.getContentLength();
+
+		DataInputStream dis = new DataInputStream(is);
+		byte[] data = new byte[length];
+		dis.readFully(data);
+
+		dis.close();
+		System.err.println(new String(data));
+		conn.disconnect();
 	}
 }
