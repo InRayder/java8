@@ -1,5 +1,6 @@
 package com.star.security;
 
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -10,6 +11,7 @@ import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import java.util.HashMap;
@@ -249,4 +251,28 @@ public abstract class RSACoder extends Coder {
 
 		return keyMap;
 	}
+
+	// 补充下
+	// KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+	// keyPairGenerator.initialize(1024);
+	// KeyPair keyPair = keyPairGenerator.generateKeyPair();
+	// PublicKey publicKey = keyPair.getPublic();
+	// PrivateKey privateKey = keyPair.getPrivate();
+	//
+	// Class spec = Class.forName("java.security.spec.RSAPublicKeySpec");
+	//
+	// KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	// RSAPublicKeySpec rsaPublicKeySpec = keyFactory.getKeySpec(publicKey,
+	// spec);
+	//
+	// BigInteger modulus = rsaPublicKeySpec.getModulus();
+	// BigInteger exponent = rsaPublicKeySpec.getPublicExponent();
+	//
+	// RSAPublicKeySpec receivedKeySpec = new RSAPublicKeySpec(modulus,
+	// exponent);
+	//
+	// KeyFactory receivedKeyFactory = keyFactory.getInstance("RSA");
+	// PublicKey receivedPublicKey =
+	// receivedKeyFactory.generatePublic(receivedKeySpec);
+
 }
